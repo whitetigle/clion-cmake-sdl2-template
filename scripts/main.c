@@ -13,7 +13,9 @@
 vec3_t cube_points[N_POINTS];
 vec2_t projected_points[N_POINTS];
 
-float fov_Factor = 120;
+vec3_t camera_position = {0,0,-5};
+// Field of View
+float fov_Factor = 640;
 
 bool isRunning;
 
@@ -75,8 +77,8 @@ void process_input(void) {
 // 3D vector to projected 2D point
 vec2_t project(vec3_t point) {
     vec2_t  projected_point = {
-      .x=(fov_Factor * point.x),
-      .y=(fov_Factor * point.y)
+      .x=(fov_Factor * point.x) / point.z,
+      .y=(fov_Factor * point.y) / point.z
     };
 
     return projected_point;
@@ -85,6 +87,9 @@ vec2_t project(vec3_t point) {
 void update(void) {
     for(int i = 0;i < N_POINTS; i++) {
         vec3_t point = cube_points[i];
+
+        // move the point away from the camera
+        point.z -= camera_position.z;
 
         // project the point
         vec2_t projected_point = project(point);
