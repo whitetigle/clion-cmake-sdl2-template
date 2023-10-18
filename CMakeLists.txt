@@ -15,7 +15,8 @@ set(SDL2_PATH "SDL2/x86_64-w64-mingw32")
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR})
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS})
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
+        scripts/vector.c)
 target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES})
 #target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE_DISPLAY}  ${PROJECT_INCLUDE})
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} )

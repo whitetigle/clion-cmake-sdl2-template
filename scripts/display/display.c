@@ -9,12 +9,12 @@
 
 #include "display.h"
 
-SDL_Window* window;
-SDL_Renderer* renderer;
-uint32_t * color_buffer;
-SDL_Texture * color_buffer_texture;
-int window_width;
-int window_height;
+SDL_Window* window = NULL;
+SDL_Renderer* renderer = NULL;
+uint32_t* color_buffer = NULL;
+SDL_Texture* color_buffer_texture = NULL;
+int window_width = 800;
+int window_height = 600;
 
 bool initialize_window(void) {
     if( SDL_Init(SDL_INIT_EVERYTHING) !=0) {
@@ -72,7 +72,6 @@ void render_color_buffer(void) {
             NULL);
 }
 
-
 void clear_color_buffer(uint32_t color) {
     for(int y =0; y < window_height; y++) {
         for(int x =0; x < window_width; x++) {
@@ -83,16 +82,26 @@ void clear_color_buffer(uint32_t color) {
     }
 }
 
+void draw_pixel(int x, int y, uint32_t color) {
+    if(x >= window_width || y >= window_height) return;
+
+    int row = window_width * y;
+    int position = row + x;
+    color_buffer[position] = color;
+}
+
 void draw_grid(void) {
     for(int y =0; y < window_height; y++) {
         for(int x =0; x < window_width; x++) {
-            int row = window_width * y;
-            int position = row + x;
+//            int row = window_width * y;
+//            int position = row + x;
             if(y%10==0) {
-                color_buffer[position] = 0xFFFFFFFF;
+                draw_pixel(x,y,0xFFFFFFFF);
+//                color_buffer[position] = 0xFFFFFFFF;
             }
             if(x%10==0) {
-                color_buffer[position] = 0xFFFFFFFF;
+                draw_pixel(x,y,0xFFFFFFFF);
+//                color_buffer[position] = 0xFFFFFFFF;
             }
         }
     }
@@ -101,9 +110,10 @@ void draw_grid(void) {
 void draw_grid_points(void) {
     for(int y =0; y < window_height; y += 10) {
         for(int x =0; x < window_width; x += 10) {
-            int row = window_width * y;
-            int position = row + x;
-            color_buffer[position] = 0xFF777777;
+            draw_pixel(x,y,0xFF777777);
+//            int row = window_width * y;
+//            int position = row + x;
+//            color_buffer[position] = 0xFF777777;
         }
     }
 }
@@ -134,9 +144,10 @@ void draw_rect(int wx, int wy, int width, int height, uint32_t color) {
 
     for(int y =wy; y < wy+height; y ++) {
         for(int x =wx; x < wx+width; x++) {
-            int row = window_width * y;
-            int position = row + x;
-            color_buffer[position] = color;
+            draw_pixel(x,y,color);
+//            int row = window_width * y;
+//            int position = row + x;
+//            color_buffer[position] = color;
         }
     }
 }
