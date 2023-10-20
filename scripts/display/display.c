@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "display.h"
 
@@ -108,6 +109,35 @@ void draw_grid_points(void) {
         for(int x =0; x < window_width; x += 10) {
             draw_pixel(x,y,0xFF777777);
         }
+    }
+}
+
+void draw_line_vec2(vec2_t p1, vec2_t p2, uint32_t color) {
+    draw_line(p1.x,p1.y,p2.x,p2.y,color);
+}
+
+// DDA approach, slower than Bresenham (uses divisions and floats)
+void draw_line(int x0, int y0, int x1, int y1, uint32_t color) {
+    int delta_x = (x1 - x0);
+    int delta_y = (y1 - y0);
+
+    int dx = abs(delta_x);
+    int dy = abs(delta_y);
+
+    // we take the longer delta for the side length,
+    // because sometimes the slope is steeper
+    // (height > width of a side of the triangle)
+    int side_length = dx >= dy ? dx : dy;
+
+    float x_inc = (float)delta_x / (float)side_length;
+    float y_inc = (float)delta_y / (float)side_length;
+
+    float current_x = (float)x0;
+    float current_y = (float)y0;
+    for( int i = 0; i < side_length; i++ ) {
+        draw_pixel(round(current_x),round(current_y),color);
+        current_x += x_inc;
+        current_y += y_inc;
     }
 }
 

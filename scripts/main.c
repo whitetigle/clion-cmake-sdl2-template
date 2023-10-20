@@ -9,8 +9,10 @@
 #include "display/display.h"
 #include "vector.h"
 #include "mesh.h"
+#include "array.h"
 
-triangle_t triangles_to_render[N_MESH_FACES];
+//triangle_t triangles_to_render[N_MESH_FACES];
+triangle_t * triangles_to_render = NULL;
 
 vec3_t camera_position = {0,0,-5};
 vec3_t cube_rotation = {0,0,0};
@@ -75,6 +77,18 @@ vec2_t project(vec3_t point) {
     return projected_point;
 }
 
+// this is just a test. All the faces will have the same size, no perspective at all
+// it could be useful in isometric projects
+vec2_t project_orthographic(vec3_t point) {
+    int fov = 128;
+    vec2_t  projected_point = {
+            .x=(fov * point.x),
+            .y=(fov * point.y)
+    };
+
+    return projected_point;
+}
+
 void update(void) {
 
     // while not passed lock the update (manual version)
@@ -87,6 +101,9 @@ void update(void) {
     }
 
     previous_frame_time = SDL_GetTicks64();
+
+    // initialize the array of triangles to render
+    triangles_to_render = NULL;
 
     cube_rotation.y += 0.01f; // rotation by Y
     cube_rotation.x += 0.01f; // rotation by Y
@@ -119,6 +136,10 @@ void update(void) {
             // project on our 2D plane (screen/flatten)
             vec2_t projected_point = project(transformed_vertex);
 
+            // --- test of orthographic projection. Uncomment to play with
+//            vec2_t projected_point = project_orthographic(transformed_vertex);
+            // ---
+
             // scale and translate at the middle of the screen
             projected_point.x += window_width * 0.5;
             projected_point.y += window_height * 0.5;
@@ -128,8 +149,10 @@ void update(void) {
         }
 
         // store the result for the current face as a proper projected triangle_t
-        triangles_to_render[i] = projected_triangle;
+//        triangles_to_render[i] = projected_triangle;
+        array_push(triangles_to_render, projected_triangle);
     }
+
 
 }
 
@@ -138,7 +161,8 @@ void render(void) {
     draw_grid_points();
 
     // render faces
-    for(int i =0;i < N_MESH_FACES;i++) {
+    int number_triangles = array_length(triangles_to_render);
+    for(int i =0;i < number_triangles;i++) {
         triangle_t triangle = triangles_to_render[i];
 
         // draw the 3 vertices of the triangle
@@ -151,10 +175,20 @@ void render(void) {
                     4,
                     0xFFFFFF00);
         }
+
+        vec2_t p1 = triangle.points[0];
+        vec2_t p2 = triangle.points[1];
+        vec2_t p3 = triangle.points[2];
+        draw_line_vec2(p1,p2,0xFFFF00FF);
+        draw_line_vec2(p2,p3,0xFFFF00FF);
+        draw_line_vec2(p3,p1,0xFFFF00FF);
     }
 
 //    draw_pixel(20,20, 0xFF00FF00);
 //    draw_rect(1230,670,100,100,0xFFFF0000);
+    // clear the array of triangles every frame loop
+    array_free(triangles_to_render);
+
     render_color_buffer();
     clear_color_buffer(0xFF000000);
     SDL_RenderPresent(renderer);
