@@ -2,9 +2,19 @@
 // Created by conta on 10/19/2023.
 //
 
+#include <stdio.h>
 #include "mesh.h"
+#include "array.h"
 
-vec3_t mesh_vertices[N_MESH_VERTICES] = {
+// initialize global mesh
+mesh_t mesh ={
+    .vertices = NULL,
+    .faces = NULL,
+    .rotation = {0,0,0}
+};
+
+
+vec3_t cube_vertices[N_CUBE_VERTICES] = {
         {-1,-1,-1},
         {-1,1,-1},
         {1,1,-1},
@@ -15,10 +25,10 @@ vec3_t mesh_vertices[N_MESH_VERTICES] = {
         {-1,-1,1},
 };
 
-// array of indexes that refer to mesh_vertices
+// array of indexes that refer to cube_vertices
 // order IS important!
 // Note: index starts from 1 no 0
-face_t mesh_faces[N_MESH_FACES] = {
+face_t cube_faces[N_CUBE_FACES] = {
         // front
         {1,2,3},
         {1,3,4},
@@ -38,3 +48,14 @@ face_t mesh_faces[N_MESH_FACES] = {
         {6,8,1},
         {6,1,4}
 };
+
+void load_cube_mesh_data(void) {
+    for(int i =0;i < N_CUBE_VERTICES; i++) {
+        vec3_t cube_vertex = cube_vertices[i];
+        array_push(mesh.vertices, cube_vertex);
+    }
+    for(int i =0;i < N_CUBE_FACES; i++) {
+        face_t cube_face = cube_faces[i];
+        array_push(mesh.faces, cube_face);
+    }
+}
