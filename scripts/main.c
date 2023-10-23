@@ -23,6 +23,8 @@ bool isRunning;
 
 uint64_t previous_frame_time = 0;
 
+//#define ASSETS_PATH "${ASSETS_PATH}"
+
 bool setup(void) {
 
     // allocate the required memory in bytes to hold the color buffer
@@ -44,7 +46,11 @@ bool setup(void) {
         return false;
     }
 
-    load_cube_mesh_data();
+//    load_cube_mesh_data();
+    char result[100];
+    sprintf(result, "%sf22.obj",ASSETS_PATH);
+    char* name = result;
+    load_obj_file_data(name);
 
     return true;
 }
@@ -106,9 +112,9 @@ void update(void) {
     // initialize the array of triangles to render
     triangles_to_render = NULL;
 
-    mesh.rotation.y += 0.01f; // rotation by Y
+    mesh.rotation.y += 0.00f; // rotation by Y
     mesh.rotation.x += 0.01f; // rotation by Y
-    mesh.rotation.z += 0.01f; // rotation by Y
+    mesh.rotation.z += 0.00f; // rotation by Y
 
     // loop all triangles faces of our mesh
     int num_faces = array_length(mesh.faces);

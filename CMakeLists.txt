@@ -27,3 +27,5 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
 target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES})
 #target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE_DISPLAY}  ${PROJECT_INCLUDE})
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} )
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/") # Set the asset path macro to the absolute path on the dev machine
