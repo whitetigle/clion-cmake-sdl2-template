@@ -12,7 +12,7 @@
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
-uint32_t* color_buffer = NULL;
+color_t* color_buffer = NULL;
 SDL_Texture* color_buffer_texture = NULL;
 int window_width = 800;
 int window_height = 600;
@@ -63,7 +63,7 @@ void render_color_buffer(void) {
             color_buffer_texture,
             NULL, // the whole
             color_buffer,
-            (int) (window_width * (sizeof(uint32_t )))
+            (int) (window_width * (sizeof(color_t )))
     );
 
     SDL_RenderCopy(
@@ -73,7 +73,7 @@ void render_color_buffer(void) {
             NULL);
 }
 
-void clear_color_buffer(uint32_t color) {
+void clear_color_buffer(color_t color) {
     for(int y =0; y < window_height; y++) {
         for(int x =0; x < window_width; x++) {
             int row = window_width * y;
@@ -83,7 +83,7 @@ void clear_color_buffer(uint32_t color) {
     }
 }
 
-void draw_pixel(int x, int y, uint32_t color) {
+void draw_pixel(int x, int y, color_t color) {
     if(x >= window_width || y >= window_height) return;
 
     int row = window_width * y;
@@ -112,12 +112,12 @@ void draw_grid_points(void) {
     }
 }
 
-void draw_line_vec2(vec2_t p1, vec2_t p2, uint32_t color) {
+void draw_line_vec2(vec2_t p1, vec2_t p2, color_t color) {
     draw_line(p1.x,p1.y,p2.x,p2.y,color);
 }
 
 // DDA approach, slower than Bresenham (uses divisions and floats)
-void draw_line(int x0, int y0, int x1, int y1, uint32_t color) {
+void draw_line(int x0, int y0, int x1, int y1, color_t color) {
     int delta_x = (x1 - x0);
     int delta_y = (y1 - y0);
 
@@ -141,13 +141,13 @@ void draw_line(int x0, int y0, int x1, int y1, uint32_t color) {
     }
 }
 
-void draw_triangle(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color) {
+void draw_triangle(int x0, int y0, int x1, int y1, int x2, int y2, color_t color) {
     draw_line(x0, y0, x1, y1, color);
     draw_line(x1, y1, x2, y2, color);
     draw_line(x2, y2, x0, y0, color);
 }
 
-void draw_rect(int wx, int wy, int width, int height, uint32_t color) {
+void draw_rect(int wx, int wy, int width, int height, color_t color) {
 
     if( wx < 0 || wy < 0 || width < 0 || height < 0) {
         return;

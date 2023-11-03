@@ -24,8 +24,24 @@ bool isRunning;
 uint64_t previous_frame_time = 0;
 
 //#define ASSETS_PATH "${ASSETS_PATH}"
+enum cull_method {
+    CULL_NONE,
+    CULL_BACKFACE
+} cull_method; // kind of global variable
+
+enum render_method {
+    RENDER_WIRE,
+    RENDER_WIRE_VERTEX,
+    RENDER_FILL_TRIANGLE,
+    RENDER_FILL_TRIANGLE_WIRE,
+} render_method; // kind of global variable
+
 
 bool setup(void) {
+
+    // initialize render_mode
+    render_method = RENDER_WIRE;
+    cull_method = CULL_BACKFACE;
 
     // allocate the required memory in bytes to hold the color buffer
     size_t s32 = sizeof(uint32_t);
@@ -68,6 +84,18 @@ void process_input(void) {
             if(event.key.keysym.sym == SDLK_ESCAPE) {
                 isRunning = false;
             }
+            if(event.key.keysym.sym == SDLK_1)
+                    render_method = RENDER_WIRE_VERTEX;
+            if(event.key.keysym.sym == SDLK_2)
+                render_method = RENDER_WIRE;
+            if(event.key.keysym.sym == SDLK_3)
+                render_method = RENDER_FILL_TRIANGLE;
+            if(event.key.keysym.sym == SDLK_4)
+                render_method = RENDER_FILL_TRIANGLE_WIRE;
+            if(event.key.keysym.sym == SDLK_c)
+                cull_method = CULL_BACKFACE;
+            if(event.key.keysym.sym == SDLK_d)
+                cull_method = CULL_NONE;
             break;
         case SDL_MOUSEBUTTONDOWN :
             isRunning = false;
@@ -228,22 +256,35 @@ void render(void) {
     for(int i =0;i < number_triangles;i++) {
         triangle_t triangle = triangles_to_render[i];
 
-        draw_triangle(
-                triangle.points[0].x, triangle.points[0].y, // vertex A
-                triangle.points[1].x, triangle.points[1].y, // vertex B
-                triangle.points[2].x, triangle.points[2].y, // vertex C
-                0xFF00FF00
-        );
+        if(render_method == RENDER_FILL_TRIANGLE || render_method == RENDER_FILL_TRIANGLE_WIRE) {
+            draw_filled_triangle(
+                    triangle.points[0].x, triangle.points[0].y, // vertex A
+                    triangle.points[1].x, triangle.points[1].y, // vertex B
+                    triangle.points[2].x, triangle.points[2].y, // vertex C
+                    0xFF00FF00
+            );
+        }
+
+        if(render_method == RENDER_WIRE || render_method == RENDER_WIRE_VERTEX || render_method == RENDER_FILL_TRIANGLE_WIRE ){
+            draw_triangle(
+                    triangle.points[0].x, triangle.points[0].y, // vertex A
+                    triangle.points[1].x, triangle.points[1].y, // vertex B
+                    triangle.points[2].x, triangle.points[2].y, // vertex C
+                    0xFFFF00FF
+            );
+        }
 
         // draw the 3 vertices of the triangle
-        for(int j=0;j<3;j++) {
-            vec2_t point = triangle.points[j];
-            draw_rect(
-                    point.x,
-                    point.y,
-                    4,
-                    4,
-                    0xFFFFFF00);
+        if(render_method == RENDER_WIRE_VERTEX) {
+            for(int j=0;j<3;j++) {
+                vec2_t point = triangle.points[j];
+                draw_rect(
+                        point.x,
+                        point.y,
+                        4,
+                        4,
+                        0xFFFFFF00);
+            }
         }
 
     }

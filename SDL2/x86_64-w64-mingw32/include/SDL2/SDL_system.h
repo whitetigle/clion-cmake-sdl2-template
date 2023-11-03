@@ -135,7 +135,7 @@ extern DECLSPEC ID3D12Device* SDLCALL SDL_RenderGetD3D12Device(SDL_Renderer* ren
  *
  * The DXGI Adapter and Output indices can be passed to `EnumAdapters` and
  * `EnumOutputs` respectively to get the objects required to create a DX10 or
- * DX11 device and swap chain.
+ * DX11 device and int_swap chain.
  *
  * Before SDL 2.0.4 this function did not return a value. Since SDL 2.0.4 it
  * returns an SDL_bool.

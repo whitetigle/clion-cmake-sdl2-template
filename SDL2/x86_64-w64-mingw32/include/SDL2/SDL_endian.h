@@ -120,7 +120,7 @@ extern "C" {
  *  \file SDL_endian.h
  */
 
-/* various modern compilers may have builtin swap */
+/* various modern compilers may have builtin int_swap */
 #if defined(__GNUC__) || defined(__clang__)
 #   define HAS_BUILTIN_BSWAP16 (_SDL_HAS_BUILTIN(__builtin_bswap16)) || \
         (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8))
@@ -281,7 +281,7 @@ SDL_Swap64(Uint64 x)
 {
     Uint32 hi, lo;
 
-    /* Separate into high and low 32-bit values and swap them */
+    /* Separate into high and low 32-bit values and int_swap them */
     lo = SDL_static_cast(Uint32, x & 0xFFFFFFFF);
     x >>= 32;
     hi = SDL_static_cast(Uint32, x & 0xFFFFFFFF);

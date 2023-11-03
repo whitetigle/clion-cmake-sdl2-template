@@ -2092,7 +2092,7 @@ extern DECLSPEC void SDLCALL SDL_GL_GetDrawableSize(SDL_Window * window, int *w,
                                                     int *h);
 
 /**
- * Set the swap interval for the current OpenGL context.
+ * Set the int_swap interval for the current OpenGL context.
  *
  * Some systems allow specifying -1 for the interval, to enable adaptive
  * vsync. Adaptive vsync works the same as vsync, but if you've already missed
@@ -2111,7 +2111,7 @@ extern DECLSPEC void SDLCALL SDL_GL_GetDrawableSize(SDL_Window * window, int *w,
  *
  * \param interval 0 for immediate updates, 1 for updates synchronized with
  *                 the vertical retrace, -1 for adaptive vsync
- * \returns 0 on success or -1 if setting the swap interval is not supported;
+ * \returns 0 on success or -1 if setting the int_swap interval is not supported;
  *          call SDL_GetError() for more information.
  *
  * \since This function is available since SDL 2.0.0.
@@ -2121,13 +2121,13 @@ extern DECLSPEC void SDLCALL SDL_GL_GetDrawableSize(SDL_Window * window, int *w,
 extern DECLSPEC int SDLCALL SDL_GL_SetSwapInterval(int interval);
 
 /**
- * Get the swap interval for the current OpenGL context.
+ * Get the int_swap interval for the current OpenGL context.
  *
- * If the system can't determine the swap interval, or there isn't a valid
+ * If the system can't determine the int_swap interval, or there isn't a valid
  * current context, this function will return 0 as a safe default.
  *
  * \returns 0 if there is no vertical retrace synchronization, 1 if the buffer
- *          swap is synchronized with the vertical retrace, and -1 if late
+ *          int_swap is synchronized with the vertical retrace, and -1 if late
  *          swaps happen immediately instead of waiting for the next retrace;
  *          call SDL_GetError() for more information.
  *
