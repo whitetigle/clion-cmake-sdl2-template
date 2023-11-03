@@ -14,7 +14,7 @@
 //triangle_t triangles_to_render[N_CUBE_FACES];
 triangle_t * triangles_to_render = NULL;
 
-vec3_t camera_position = {0,0,-5};
+vec3_t camera_position = {0,0,0};
 
 // Field of View
 float fov_Factor = 640;
@@ -48,7 +48,8 @@ bool setup(void) {
 
 //    load_cube_mesh_data();
     char result[100];
-    sprintf(result, "%sf22.obj",ASSETS_PATH);
+    sprintf(result, "%scube.obj",ASSETS_PATH);
+//    sprintf(result, "%sf22.obj",ASSETS_PATH);
     char* name = result;
     load_obj_file_data(name);
 
@@ -112,9 +113,9 @@ void update(void) {
     // initialize the array of triangles to render
     triangles_to_render = NULL;
 
-    mesh.rotation.y += 0.00f; // rotation by Y
+    mesh.rotation.y += 0.01f; // rotation by Y
     mesh.rotation.x += 0.01f; // rotation by Y
-    mesh.rotation.z += 0.00f; // rotation by Y
+    mesh.rotation.z += 0.01f; // rotation by Y
 
     // loop all triangles faces of our mesh
     int num_faces = array_length(mesh.faces);
@@ -127,7 +128,7 @@ void update(void) {
         face_vertices[1] = mesh.vertices[mesh_face.b - 1];
         face_vertices[2] = mesh.vertices[mesh_face.c - 1];
 
-        triangle_t projected_triangle;
+        vec3_t transformed_vertices[3];
 
         // for each vertex value (=a 3D point), project and get the projected result as a triangle_t
         for(int j=0; j<3;j++) {
@@ -139,10 +140,56 @@ void update(void) {
             transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
             // Translate the vertex away from the camera in z
-            transformed_vertex.z -= camera_position.z;
+            // pushing everything INSIDE the monitor
+            transformed_vertex.z += 5;
+
+            // Save transformed vertex in the array of transformed vertices
+            // for later usage
+            transformed_vertices[j] = transformed_vertex;
+        }
+
+        // check backface culling: do we need to display the face?
+        // prepare the vectors for the triangle
+        vec3_t vector_a = transformed_vertices[0]; //   A
+        vec3_t vector_b = transformed_vertices[1]; /*  / \ */
+        vec3_t vector_c = transformed_vertices[2]; // C _ B
+
+        // Step 1 : find B-A and C-A
+        vec3_t vector_ab = vec3_sub(vector_b,vector_a); // B - A
+        vec3_t vector_ac = vec3_sub(vector_c,vector_a); // C - A
+
+        // Step 2: find Face Normal using cross-product
+        // it depends on handedness. Going inside the monitor or outside?
+        // here we use a left-handed, z will go into the screen
+        // the order is then
+        vec3_t normal = vec3_cross(vector_ab, vector_ac);
+
+        /*
+         * otherwise, if it was right-handed, pointing to us like DirectX,
+         * it would be
+         * vec3_t normal = vec3_cross(vector_ac, vector_ab);
+        * */
+
+        // Step 3: find the camera ray
+        // Find the vector between a point in the triangle and the camera origin
+        // by subtracting the camera position from Point A
+        vec3_t camera_ray = vec3_sub(camera_position,vector_a);
+
+        // Step 4:
+        // Calculate how aligned the camera ray is with the face normal (using dot-product)
+        float dot_normal_camera = vec3_dot(normal, camera_ray);
+
+        // do we display the face?
+        // Not displayed? don't project vertices
+        if(dot_normal_camera < 0) continue;
+
+        triangle_t projected_triangle;
+
+        // loop all vertices to perform projection
+        for(int j=0; j<3;j++) {
 
             // project on our 2D plane (screen/flatten)
-            vec2_t projected_point = project(transformed_vertex);
+            vec2_t projected_point = project(transformed_vertices[j]);
 
             // --- test of orthographic projection. Uncomment to play with
 //            vec2_t projected_point = project_orthographic(transformed_vertex);
@@ -173,6 +220,13 @@ void render(void) {
     for(int i =0;i < number_triangles;i++) {
         triangle_t triangle = triangles_to_render[i];
 
+        draw_triangle(
+                triangle.points[0].x, triangle.points[0].y, // vertex A
+                triangle.points[1].x, triangle.points[1].y, // vertex B
+                triangle.points[2].x, triangle.points[2].y, // vertex C
+                0xFF00FF00
+        );
+
         // draw the 3 vertices of the triangle
         for(int j=0;j<3;j++) {
             vec2_t point = triangle.points[j];
@@ -184,12 +238,6 @@ void render(void) {
                     0xFFFFFF00);
         }
 
-        vec2_t p1 = triangle.points[0];
-        vec2_t p2 = triangle.points[1];
-        vec2_t p3 = triangle.points[2];
-        draw_line_vec2(p1,p2,0xFFFF00FF);
-        draw_line_vec2(p2,p3,0xFFFF00FF);
-        draw_line_vec2(p3,p1,0xFFFF00FF);
     }
 
 //    draw_pixel(20,20, 0xFF00FF00);

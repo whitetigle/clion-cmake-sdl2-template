@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define FPS 60
+#define FPS 30
 #define FRAME_TARGET_TIME (1000 / FPS)
 
 extern SDL_Window* window;
@@ -28,6 +28,7 @@ void render_color_buffer(void);
 void clear_color_buffer(uint32_t color);
 void destroy_window(void);
 void draw_line(int x0, int y0, int x1, int y1, uint32_t color);
+void draw_triangle(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color);
 void draw_line_vec2(vec2_t p1, vec2_t p2, uint32_t color);
 
 #endif //PROJECT_NAME_DISPLAY_H
