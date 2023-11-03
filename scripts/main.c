@@ -158,6 +158,10 @@ void update(void) {
         vec3_t vector_ab = vec3_sub(vector_b,vector_a); // B - A
         vec3_t vector_ac = vec3_sub(vector_c,vector_a); // C - A
 
+        // normalize: we don't need the actual values
+        vec3_normalize(&vector_ab);
+        vec3_normalize(&vector_ac);
+
         // Step 2: find Face Normal using cross-product
         // it depends on handedness. Going inside the monitor or outside?
         // here we use a left-handed, z will go into the screen
@@ -169,6 +173,10 @@ void update(void) {
          * it would be
          * vec3_t normal = vec3_cross(vector_ac, vector_ab);
         * */
+
+        // Normalize the face normal
+        // since we just need to know the direction
+        vec3_normalize(&normal);
 
         // Step 3: find the camera ray
         // Find the vector between a point in the triangle and the camera origin
