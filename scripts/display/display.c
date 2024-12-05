@@ -83,6 +83,7 @@ void clear_color_buffer(color_t color) {
     }
 }
 
+
 void draw_pixel(int x, int y, color_t color) {
     if(x >= window_width || y >= window_height) return;
 

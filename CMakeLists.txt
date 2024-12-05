@@ -23,7 +23,9 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         scripts/triangle.h
         scripts/array.c
         scripts/array.h
-        scripts/array.h)
+        scripts/array.h
+        scripts/matrix.c
+        scripts/matrix.h)
 target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES})
 #target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE_DISPLAY}  ${PROJECT_INCLUDE})
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} )
